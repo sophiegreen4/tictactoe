@@ -8,62 +8,80 @@ public class Main {
     static ArrayList<Integer> playerPositions = new ArrayList<Integer>();
     static ArrayList<Integer> computerPositions = new ArrayList<Integer>();
 
-    public static void main(String[] args) {
 
-        // set up the board in the console using a 2D array and '|' & '+' to create the grid
-        char [][] gameBoard = {{' ', '|', ' ', '|', ' '},
-                {'-', '+', '-', '+', '-'},
-                {' ', '|', ' ', '|', ' '},
-                {'-', '+', '-', '+', '-'},
-                {' ', '|', ' ', '|', ' '}};
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        String playAgain;
+
+        do {
+            // set up the board in the console using a 2D array and '|' & '+' to create the grid
+            char[][] gameBoard = {{' ', '|', ' ', '|', ' '},
+                    {'-', '+', '-', '+', '-'},
+                    {' ', '|', ' ', '|', ' '},
+                    {'-', '+', '-', '+', '-'},
+                    {' ', '|', ' ', '|', ' '}};
+
+            // empty the board from previous games
+            playerPositions.clear();
+            computerPositions.clear();
 
         // print the board (set up in below method)
         printGameBoard(gameBoard);
 
 
-        // while loop so the game continues
-        while (true) {
+            // while loop so the game continues
+            while (true) {
 
-            // use scanner for players to input their choice, numbers 1-9 represent a square on the board
-            Scanner input = new Scanner(System.in);
 
-            System.out.println("Enter your choice (1 - 9): ");
-            int pos = input.nextInt();
-            // validates input
-            if(pos < 0 || pos > 9) {
-                System.out.println("Invalid input, try again:");
-                pos = input.nextInt();
+                // PLAYER TURN
+                System.out.println("Enter your choice (1 - 9): ");
+                int pos = input.nextInt();
+                // validates input
+                if (pos < 0 || pos > 9) {
+                    System.out.println("Invalid input, try again:");
+                    pos = input.nextInt();
+                }
+                // prevents overriding already chosen positions
+                while (playerPositions.contains(pos) || computerPositions.contains(pos)) {
+                    System.out.println("Position already taken! Choose again:");
+                    pos = input.nextInt();
+                }
+
+                placePiece(gameBoard, pos, "player");
+                String result = checkWinner();
+                if (result.length() > 0) {
+                    System.out.println(result);
+                }
+
+
+                // CPU TURN
+                Random rand = new Random();
+                int compPos = rand.nextInt(9) + 1;
+                while (playerPositions.contains(compPos) || computerPositions.contains(compPos)) {
+                    compPos = rand.nextInt(9) + 1;
+                }
+                placePiece(gameBoard, compPos, "computer");
+
+                printGameBoard(gameBoard);
+
+                result = checkWinner();
+                if (result.length() > 0) {
+                    System.out.println(result);
+                    break;
+                }
+
             }
-            // prevents overriding already chosen positions
-            while(playerPositions.contains(pos) || computerPositions.contains(pos)) {
-                System.out.println("Position already taken! Choose again:");
-                pos = input.nextInt();
-            }
 
-            placePiece(gameBoard, pos, "player");
-            String result = checkWinner();
-            if(result.length() > 0) {
-                System.out.println(result);
-            }
+            // Ask to play again
+            System.out.print("Play again? ");
+            input.nextLine();
+            playAgain = input.nextLine().toLowerCase();
 
 
-            Random rand = new Random();
-            int compPos = rand.nextInt(9) + 1;
-            while(playerPositions.contains(compPos) || computerPositions.contains(compPos)) {
-                compPos = rand.nextInt(9) + 1;
-            }
-            placePiece(gameBoard, compPos, "computer");
+        } while (playAgain.equals("yes") || playAgain.equals("y") || playAgain.equals("yeah") || playAgain.equals("ok"));
 
-            printGameBoard(gameBoard);
+        input.close();
 
-            result = checkWinner();
-            if(result.length() > 0) {
-                System.out.println(result);
-                break;
-            }
-
-
-        }
 
     }
 
